@@ -1,0 +1,17 @@
+name: compose-config
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  compose-config:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate docker compose file
+        run: docker compose config
+      - name: Unit tests
+        run: |
+          python3 -m pip install pytest
+          PYTHONPATH=src python3 -m pytest tests -q

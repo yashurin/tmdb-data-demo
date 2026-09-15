@@ -1,0 +1,141 @@
+version: 2
+
+models:
+  - name: dim_movie
+    description: Movie dimension (descriptive attributes).
+    columns:
+      - name: movie_id
+        data_tests: [not_null, unique]
+
+  - name: dim_person
+    description: Person dimension.
+    columns:
+      - name: person_id
+        data_tests: [not_null, unique]
+
+  - name: dim_genre
+    description: Genre dimension.
+    columns:
+      - name: genre_id
+        data_tests: [not_null, unique]
+
+  - name: dim_company
+    description: Production company dimension.
+    columns:
+      - name: company_id
+        data_tests: [not_null, unique]
+
+  - name: dim_keyword
+    description: Keyword dimension.
+    columns:
+      - name: keyword_id
+        data_tests: [not_null, unique]
+
+  - name: dim_date
+    description: Date dimension built from observed movie release_date range.
+    columns:
+      - name: date_day
+        data_tests: [not_null, unique]
+
+  - name: fact_movie
+    description: One row per movie with budget/revenue/votes/profit/roi.
+    columns:
+      - name: movie_id
+        data_tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('dim_movie')
+              field: movie_id
+      - name: date_day
+        data_tests:
+          - relationships:
+              to: ref('dim_date')
+              field: date_day
+
+  - name: fact_movie_cast
+    description: Cast fact — movie, person, character, cast_order.
+    columns:
+      - name: credit_id
+        data_tests: [not_null, unique]
+      - name: movie_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_movie')
+              field: movie_id
+      - name: person_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+
+  - name: fact_movie_crew
+    description: Crew fact — movie, person, department, job.
+    columns:
+      - name: credit_id
+        data_tests: [not_null, unique]
+      - name: movie_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_movie')
+              field: movie_id
+      - name: person_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_person')
+              field: person_id
+
+  - name: bridge_movie_genre
+    description: Movie-genre bridge.
+    data_tests:
+      - unique:
+          column_name: "movie_id::text || '-' || genre_id::text"
+    columns:
+      - name: movie_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_movie')
+              field: movie_id
+      - name: genre_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_genre')
+              field: genre_id
+
+  - name: bridge_movie_company
+    description: Movie-company bridge.
+    data_tests:
+      - unique:
+          column_name: "movie_id::text || '-' || company_id::text"
+    columns:
+      - name: movie_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_movie')
+              field: movie_id
+      - name: company_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_company')
+              field: company_id
+
+  - name: movie_analytics
+    description: Wide demo table for Metabase (genre_list, top_3_cast, primary_company, profit, roi).
+    columns:
+      - name: movie_id
+        data_tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('dim_movie')
+              field: movie_id
+      - name: title
+        data_tests: [not_null]

@@ -1,0 +1,166 @@
+version: 2
+
+models:
+  - name: genre
+    description: TMDB movie genres (natural id).
+    columns:
+      - name: genre_id
+        data_tests: [not_null, unique]
+      - name: name
+        data_tests: [not_null]
+
+  - name: movie
+    description: Conformed movie attributes from TMDB movie details. Optional fields may be null.
+    columns:
+      - name: movie_id
+        data_tests: [not_null, unique]
+      - name: title
+        data_tests: [not_null]
+
+  - name: movie_genre
+    description: Movie-to-genre bridge.
+    data_tests:
+      - unique:
+          column_name: "movie_id::text || '-' || genre_id::text"
+    columns:
+      - name: movie_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('movie')
+              field: movie_id
+      - name: genre_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('genre')
+              field: genre_id
+
+  - name: company
+    description: Production companies from movie details.
+    columns:
+      - name: company_id
+        data_tests: [not_null, unique]
+      - name: name
+        data_tests: [not_null]
+
+  - name: movie_company
+    description: Movie-to-company bridge.
+    data_tests:
+      - unique:
+          column_name: "movie_id::text || '-' || company_id::text"
+    columns:
+      - name: movie_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('movie')
+              field: movie_id
+      - name: company_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('company')
+              field: company_id
+
+  - name: country
+    description: Production countries (ISO 3166-1).
+    columns:
+      - name: iso_3166_1
+        data_tests: [not_null, unique]
+
+  - name: movie_country
+    description: Movie-to-country bridge.
+    data_tests:
+      - unique:
+          column_name: "movie_id::text || '-' || iso_3166_1"
+    columns:
+      - name: movie_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('movie')
+              field: movie_id
+      - name: iso_3166_1
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('country')
+              field: iso_3166_1
+
+  - name: language
+    description: Spoken languages from movie details (ISO 639-1).
+    columns:
+      - name: iso_639_1
+        data_tests: [not_null, unique]
+
+  - name: person
+    description: People from person details, filled from credits when not extracted.
+    columns:
+      - name: person_id
+        data_tests: [not_null, unique]
+      - name: name
+        data_tests: [not_null]
+
+  - name: credit_cast
+    description: Cast credits. TMDB field `order` stored as `cast_order`.
+    columns:
+      - name: credit_id
+        data_tests: [not_null, unique]
+      - name: movie_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('movie')
+              field: movie_id
+      - name: person_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('person')
+              field: person_id
+
+  - name: credit_crew
+    description: Crew credits.
+    columns:
+      - name: credit_id
+        data_tests: [not_null, unique]
+      - name: movie_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('movie')
+              field: movie_id
+      - name: person_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('person')
+              field: person_id
+
+  - name: keyword
+    description: TMDB keywords.
+    columns:
+      - name: keyword_id
+        data_tests: [not_null, unique]
+      - name: name
+        data_tests: [not_null]
+
+  - name: movie_keyword
+    description: Movie-to-keyword bridge.
+    data_tests:
+      - unique:
+          column_name: "movie_id::text || '-' || keyword_id::text"
+    columns:
+      - name: movie_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('movie')
+              field: movie_id
+      - name: keyword_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('keyword')
+              field: keyword_id

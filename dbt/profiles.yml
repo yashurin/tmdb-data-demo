@@ -1,0 +1,15 @@
+tmdb_medallion:
+  target: warehouse
+  outputs:
+    warehouse:
+      type: postgres
+      host: "{{ env_var('WAREHOUSE_HOST', 'postgres') }}"
+      port: 5432
+      user: "{{ env_var('POSTGRES_USER', 'tmdb') }}"
+      password: "{{ env_var('POSTGRES_PASSWORD', 'tmdb') }}"
+      dbname: "{{ env_var('WAREHOUSE_DB', 'warehouse') }}"
+      schema: silver
+      threads: 4
+      keepalives_idle: 0
+      connect_timeout: 10
+      sslmode: disable

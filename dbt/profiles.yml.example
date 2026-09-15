@@ -1,0 +1,16 @@
+# Copy is not required in Docker: Airflow mounts dbt/profiles.yml and injects env vars.
+# Use this file for a laptop `dbt` CLI pointed at localhost.
+
+tmdb_medallion:
+  target: warehouse
+  outputs:
+    warehouse:
+      type: postgres
+      host: localhost
+      port: 5432
+      user: tmdb
+      password: tmdb
+      dbname: warehouse
+      schema: silver
+      threads: 4
+      sslmode: disable

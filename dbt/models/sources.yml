@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: bronze
+    description: Raw TMDB JSON cataloged from MinIO into Postgres jsonb. Not cleaned.
+    schema: bronze
+    tables:
+      - name: raw_payloads
+        description: One row per landed resource object (movie, credits, person, ...).
+        columns:
+          - name: resource
+          - name: tmdb_id
+          - name: payload
+          - name: source_key
+          - name: extracted_at
+          - name: dag_run_id
+      - name: ingest_objects
+        description: MinIO object registry for bronze files.
