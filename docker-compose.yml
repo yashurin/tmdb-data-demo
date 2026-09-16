@@ -194,7 +194,8 @@ services:
       - tmdb
 
   metabase:
-    image: metabase/metabase:v0.51.11
+    # v0.51.11 is linux/amd64-only; v0.53.10 is official multi-arch (amd64 + arm64)
+    image: metabase/metabase:v0.53.10
     ports:
       - "3000:3000"
     environment:

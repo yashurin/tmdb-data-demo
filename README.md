@@ -166,6 +166,14 @@ Init SQL runs only on an empty volume. If you started Postgres before the init s
 **Metabase cannot connect**  
 From Metabase use host `postgres`, not `localhost`. Database is `warehouse`, not `airflow`.
 
+**Metabase platform mismatch on Apple Silicon**  
+`The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8)` means Compose pulled an amd64-only Metabase tag (for example `v0.51.11`) and would run it under emulation. This repo pins `metabase/metabase:v0.53.10`, which publishes both `linux/amd64` and `linux/arm64`. Recreate the service so Docker picks the native image:
+
+```bash
+docker compose pull metabase
+docker compose up -d metabase
+```
+
 **dbt tests fail**  
 Read the `dbt_test_silver` / `dbt_test_gold` task log. Re-run silver/gold after bronze is healthy; do not skip tests — they fail the DAG on purpose.
 
